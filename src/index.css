@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #050505;
+  --color-neon-blue: #00f2ff;
+  --color-neon-purple: #bc13fe;
+  --color-crimson: #990000;
+  
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-glitch: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+  --animate-flash: flash 0.5s ease-out;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0) }
+  20% { transform: translate(-2px, 2px) }
+  40% { transform: translate(-2px, -2px) }
+  60% { transform: translate(2px, 2px) }
+  80% { transform: translate(2px, -2px) }
+  100% { transform: translate(0) }
+}
+
+@keyframes flash {
+  0% { opacity: 0; background: white; }
+  20% { opacity: 1; background: white; }
+  100% { opacity: 0; background: transparent; }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-background text-gray-300 overflow-x-hidden;
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-black;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neon-blue/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neon-blue/50;
+}
+
+/* Hide scrollbar on the Lenis-driven story container */
+.no-scrollbar {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;                /* WebKit */
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.rain-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 100%);
+  pointer-events: none;
+  z-index: 40;
+}
+
+.bullet-hole {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #333 10%, #111 40%, transparent 70%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 5px #000, 0 0 10px rgba(255,255,255,0.1);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.glitch-text {
+  animation: glitch 0.3s infinite;
+  text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9;
+}
+
+.blood-splatter {
+  position: absolute;
+  background: radial-gradient(circle, #990000 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 30;
+}
+
+/* Chromatic aberration burst — toggled on fast scroll (see App.tsx). RGB split
+   on headings/paragraphs for a brief "speed warp" feel. */
+.chromatic-active h2,
+.chromatic-active p {
+  text-shadow: 2px 0 rgba(255, 0, 200, 0.55), -2px 0 rgba(0, 255, 249, 0.55);
+  transition: text-shadow 0.14s ease-out;
+}
+
+/* Accessibility: respect the OS "reduce motion" setting. JS already disables the
+   kinetic effects; this neutralizes any remaining CSS keyframes/transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .rain-overlay,
+  .noise-overlay {
+    display: none;
+  }
+}
