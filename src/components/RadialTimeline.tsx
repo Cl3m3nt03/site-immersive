@@ -17,14 +17,22 @@ export default function RadialTimeline() {
   // Pause the orbit while reading a memory (or if the user prefers no motion).
   const paused = selected !== null || reduced;
 
-  const spinDuration = 90; // seconds for a full revolution
+  const spinDuration = 120; // seconds for a full revolution
+  const playState = paused ? ('paused' as const) : ('running' as const);
+  // Promote every rotating element to its own compositor layer so the browser
+  // re-composites cached layers each frame instead of repainting/rasterizing
+  // (text rotation in particular is what made it feel janky).
   const ringStyle = {
     animation: `ringspin ${spinDuration}s linear infinite`,
-    animationPlayState: paused ? ('paused' as const) : ('running' as const),
+    animationPlayState: playState,
+    willChange: 'transform',
+    backfaceVisibility: 'hidden' as const,
   };
   const counterStyle = {
     animation: `ringspin-rev ${spinDuration}s linear infinite`,
-    animationPlayState: paused ? ('paused' as const) : ('running' as const),
+    animationPlayState: playState,
+    willChange: 'transform',
+    backfaceVisibility: 'hidden' as const,
   };
 
   const nodes = useMemo(
