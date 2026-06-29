@@ -31,7 +31,7 @@ function App() {
 
   // Refs updated imperatively each frame (no React re-render per scroll tick).
   const progressFillRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const chapterRef = useRef(1);
   const chromaTimeout = useRef<number>(0);
@@ -47,9 +47,9 @@ function App() {
   const applyScroll = useCallback((p: number, velocity: number) => {
     // Progress bar fill
     if (progressFillRef.current) progressFillRef.current.style.height = `${p * 100}%`;
-    // Background video parallax (subtle drift + slight zoom)
-    if (videoRef.current) {
-      videoRef.current.style.transform = `scale(1.08) translateY(${(p - 0.5) * -4}%)`;
+    // Background image parallax (subtle drift + slight zoom)
+    if (bgRef.current) {
+      bgRef.current.style.transform = `scale(1.08) translateY(${(p - 0.5) * -4}%)`;
     }
     // Chromatic aberration burst on fast scroll
     if (contentRef.current && Math.abs(velocity) > 18) {
@@ -123,23 +123,34 @@ function App() {
     <div className="relative min-h-screen bg-background selection:bg-neon-blue/30 selection:text-white">
       <NeonCursor />
 
-      {/* Background Atmosphere — story view only. */}
+      {/* Background Atmosphere — story view only.
+          Drop a photo at public/bg.jpg to set the backdrop; if it's missing
+          the layer is simply transparent and the gradients below carry the
+          mood, so nothing breaks. */}
       {activeTab !== 'sphere' && (
         <>
-          <video
-            ref={videoRef}
-            className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none will-change-transform"
-            style={{ transform: "scale(1.08)" }}
-            src={`${import.meta.env.BASE_URL}video_scrool.mp4`}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
+          <div
+            ref={bgRef}
+            className="fixed inset-0 z-0 pointer-events-none will-change-transform bg-cover bg-center"
+            style={{
+              transform: "scale(1.08)",
+              backgroundImage: `url(${import.meta.env.BASE_URL}bg.jpg)`,
+            }}
           />
-          <div className="fixed inset-0 z-[1] pointer-events-none bg-black/35" />
-          <div className="fixed inset-0 z-[1] pointer-events-none bg-gradient-to-b from-black/50 via-black/10 to-black/60" />
-          <div className="fixed inset-0 z-[2] pointer-events-none [box-shadow:inset_0_0_160px_30px_rgba(0,0,0,0.65)]" />
+          {/* Darken so text stays readable over any photo */}
+          <div className="fixed inset-0 z-[1] pointer-events-none bg-black/55" />
+          <div className="fixed inset-0 z-[1] pointer-events-none bg-gradient-to-b from-black/60 via-black/20 to-black/70" />
+          {/* Neon glow tying everything to the cyan/purple palette. screen blend
+              so the corners glow even with no photo (black base) and tint the
+              photo when one is present. */}
+          <div
+            className="fixed inset-0 z-[1] pointer-events-none mix-blend-screen opacity-60"
+            style={{
+              background:
+                "radial-gradient(120% 90% at 80% 8%, rgba(188,19,254,0.5) 0%, transparent 50%), radial-gradient(120% 90% at 8% 92%, rgba(0,242,255,0.4) 0%, transparent 50%)",
+            }}
+          />
+          <div className="fixed inset-0 z-[2] pointer-events-none [box-shadow:inset_0_0_180px_40px_rgba(0,0,0,0.7)]" />
           <div className="noise-overlay" />
           <div className="rain-overlay" />
         </>
