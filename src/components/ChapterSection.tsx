@@ -57,7 +57,10 @@ function ChapterSection({ chapter }: ChapterSectionProps) {
   return (
     <section
       ref={ref}
-      className={`relative min-h-screen w-full flex flex-col items-center justify-center py-32 px-6 overflow-hidden border-b border-white/5 transition-colors duration-1000 ${
+      // content-visibility skips layout/paint for the off-screen chapters
+      // (10 full-height sections otherwise all paint every frame). The
+      // intrinsic-size hint keeps the scrollbar stable while they're skipped.
+      className={`relative min-h-screen w-full flex flex-col items-center justify-center py-32 px-6 overflow-hidden border-b border-white/5 transition-colors duration-1000 [content-visibility:auto] [contain-intrinsic-size:auto_100vh] ${
         isInView && chapter.effect === 'blood' ? 'bg-crimson/5' : ''
       }`}
     >

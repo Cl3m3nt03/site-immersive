@@ -115,8 +115,7 @@ body {
 
 /* Chromatic aberration burst — toggled on fast scroll (see App.tsx). RGB split
    on headings/paragraphs for a brief "speed warp" feel. */
-.chromatic-active h2,
-.chromatic-active p {
+.chromatic-active h2 {
   text-shadow: 2px 0 rgba(255, 0, 200, 0.55), -2px 0 rgba(0, 255, 249, 0.55);
   transition: text-shadow 0.14s ease-out;
 }
