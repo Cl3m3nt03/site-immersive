@@ -30,8 +30,8 @@ export default function NeonCursor() {
         ringRef.current.style.width = interactive ? "56px" : "32px";
         ringRef.current.style.height = interactive ? "56px" : "32px";
         ringRef.current.style.borderColor = interactive
-          ? "rgba(188,19,254,0.9)"
-          : "rgba(0,242,255,0.6)";
+          ? "rgba(184,29,29,0.95)"
+          : "rgba(242,194,0,0.65)";
       }
     };
 
@@ -62,12 +62,12 @@ export default function NeonCursor() {
       <div
         ref={ringRef}
         className="absolute top-0 left-0 w-8 h-8 rounded-full border transition-[width,height,border-color] duration-300 ease-out"
-        style={{ borderColor: "rgba(0,242,255,0.6)", boxShadow: "0 0 24px rgba(0,242,255,0.25)" }}
+        style={{ borderColor: "rgba(242,194,0,0.65)", boxShadow: "0 0 24px rgba(242,194,0,0.25)" }}
       />
       <div
         ref={dotRef}
         className="absolute top-0 left-0 w-1.5 h-1.5 rounded-full bg-neon-blue"
-        style={{ boxShadow: "0 0 10px #00f2ff" }}
+        style={{ boxShadow: "0 0 10px #f2c200" }}
       />
     </div>
   );

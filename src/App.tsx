@@ -129,9 +129,10 @@ function App() {
           mood, so nothing breaks. */}
       {activeTab !== 'sphere' && (
         <>
+          {/* Concrete base (+ optional photo at public/bg.jpg) with parallax */}
           <div
             ref={bgRef}
-            className="fixed inset-0 z-0 pointer-events-none will-change-transform bg-cover bg-center"
+            className="concrete-bg fixed inset-0 z-0 pointer-events-none will-change-transform bg-cover bg-center"
             style={{
               transform: "scale(1.08)",
               backgroundImage: `url(${import.meta.env.BASE_URL}bg.jpg)`,
@@ -139,18 +140,18 @@ function App() {
           />
           {/* Darken so text stays readable over any photo */}
           <div className="fixed inset-0 z-[1] pointer-events-none bg-black/55" />
-          <div className="fixed inset-0 z-[1] pointer-events-none bg-gradient-to-b from-black/60 via-black/20 to-black/70" />
-          {/* Neon glow tying everything to the cyan/purple palette. screen blend
-              so the corners glow even with no photo (black base) and tint the
-              photo when one is present. */}
+          <div className="fixed inset-0 z-[1] pointer-events-none bg-gradient-to-b from-black/65 via-black/25 to-black/75" />
+          {/* Crimson spray glow — street accent instead of neon */}
           <div
-            className="fixed inset-0 z-[1] pointer-events-none mix-blend-screen opacity-60"
+            className="fixed inset-0 z-[1] pointer-events-none mix-blend-screen opacity-50"
             style={{
               background:
-                "radial-gradient(120% 90% at 80% 8%, rgba(188,19,254,0.5) 0%, transparent 50%), radial-gradient(120% 90% at 8% 92%, rgba(0,242,255,0.4) 0%, transparent 50%)",
+                "radial-gradient(90% 70% at 82% 12%, rgba(184,29,29,0.55) 0%, transparent 55%), radial-gradient(70% 60% at 10% 95%, rgba(242,194,0,0.18) 0%, transparent 55%)",
             }}
           />
-          <div className="fixed inset-0 z-[2] pointer-events-none [box-shadow:inset_0_0_180px_40px_rgba(0,0,0,0.7)]" />
+          {/* Caution tape strip skewed across a corner */}
+          <div className="caution-tape fixed -left-20 top-24 z-[2] h-8 w-[60vw] -rotate-[8deg] opacity-[0.14] pointer-events-none" />
+          <div className="fixed inset-0 z-[2] pointer-events-none [box-shadow:inset_0_0_180px_50px_rgba(0,0,0,0.78)]" />
           <div className="noise-overlay" />
           <div className="rain-overlay" />
         </>
@@ -177,11 +178,11 @@ function App() {
               <Magnetic strength={0.5}>
                 <button
                   onClick={() => setActiveTab('story')}
-                  className={`flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] transition-colors duration-500 focus:outline-none focus-visible:text-neon-blue ${
-                    activeTab === 'story' ? 'text-neon-blue' : 'text-white/20 hover:text-white/60'
+                  className={`flex items-center gap-2 font-condensed text-xs uppercase tracking-[0.35em] transition-colors duration-300 focus:outline-none focus-visible:text-neon-blue ${
+                    activeTab === 'story' ? 'text-neon-blue' : 'text-white/30 hover:text-white/70'
                   }`}
                 >
-                  <BookOpen size={12} />
+                  <BookOpen size={13} />
                   <span>Récit</span>
                   {activeTab === 'story' && <motion.div layoutId="tab-underline" className="absolute -bottom-2 left-0 right-0 h-px bg-neon-blue" />}
                 </button>
@@ -189,12 +190,12 @@ function App() {
               <Magnetic strength={0.5}>
                 <button
                   onClick={() => setActiveTab('sphere')}
-                  className={`flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] transition-colors duration-500 focus:outline-none focus-visible:text-neon-purple ${
-                    activeTab === 'sphere' ? 'text-neon-purple' : 'text-white/20 hover:text-white/60'
+                  className={`flex items-center gap-2 font-condensed text-xs uppercase tracking-[0.35em] transition-colors duration-300 focus:outline-none focus-visible:text-neon-purple ${
+                    activeTab === 'sphere' ? 'text-neon-purple' : 'text-white/30 hover:text-white/70'
                   }`}
                 >
-                  <Sparkles size={12} />
-                  <span>Mémoire</span>
+                  <Sparkles size={13} />
+                  <span>Dossier</span>
                   {activeTab === 'sphere' && <motion.div layoutId="tab-underline" className="absolute -bottom-2 left-0 right-0 h-px bg-neon-purple" />}
                 </button>
               </Magnetic>
@@ -202,10 +203,10 @@ function App() {
 
             {/* Header */}
             <header className="fixed top-8 left-8 z-50 flex flex-col">
-              <h1 className="text-xl font-bold tracking-[0.3em] uppercase text-white/90">
-                DeShawn Carter
+              <h1 className="font-display text-3xl tracking-wide uppercase text-bone leading-none">
+                DeShawn <span className="text-neon-purple">Carter</span>
               </h1>
-              <span className="text-[10px] tracking-[0.5em] uppercase text-neon-blue/60 font-mono">
+              <span className="text-[10px] tracking-[0.5em] uppercase text-neon-blue/70 font-stencil mt-0.5">
                 The Silent Rise
               </span>
             </header>
@@ -220,17 +221,17 @@ function App() {
                   exit={{ opacity: 0 }}
                   className="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center gap-3"
                 >
-                  <span className="text-[9px] font-mono text-neon-blue/70 tracking-widest tabular-nums">
+                  <span className="text-[11px] font-stencil text-neon-blue/80 tracking-widest tabular-nums">
                     {String(activeChapter).padStart(2, '0')}
                   </span>
-                  <div className="relative w-px h-40 bg-white/10 overflow-hidden rounded-full">
+                  <div className="relative w-0.5 h-40 bg-white/10 overflow-hidden">
                     <div
                       ref={progressFillRef}
                       className="absolute top-0 left-0 w-full bg-gradient-to-b from-neon-blue to-neon-purple"
                       style={{ height: "0%" }}
                     />
                   </div>
-                  <span className="text-[9px] font-mono text-white/30 tracking-widest tabular-nums">
+                  <span className="text-[11px] font-stencil text-white/30 tracking-widest tabular-nums">
                     {String(STORY_DATA.length).padStart(2, '0')}
                   </span>
                 </motion.div>
@@ -258,15 +259,15 @@ function App() {
                         className="group relative flex items-center justify-end"
                         aria-label={`Chapitre ${chapter.id} — ${chapter.title}`}
                       >
-                        <span className={`mr-4 text-[10px] font-mono tracking-widest transition-all duration-300 uppercase ${
+                        <span className={`mr-4 text-[10px] font-stencil tracking-widest transition-all duration-300 uppercase ${
                           active ? 'text-neon-blue' : 'text-white/0 group-hover:text-neon-blue'
                         }`}>
                           {chapter.title}
                         </span>
-                        <div className={`rounded-full transition-all duration-300 ${
+                        <div className={`transition-all duration-300 ${
                           active
-                            ? 'w-2.5 h-2.5 bg-neon-blue shadow-[0_0_10px_#00f2ff]'
-                            : 'w-1.5 h-1.5 bg-white/10 group-hover:bg-neon-blue group-hover:scale-125'
+                            ? 'w-3 h-3 bg-neon-blue shadow-[0_0_12px_#f2c200] -rotate-45'
+                            : 'w-1.5 h-1.5 bg-white/15 group-hover:bg-neon-blue group-hover:scale-125'
                         }`} />
                       </a>
                     );
@@ -335,7 +336,7 @@ function WarpFlash({ trigger }: { trigger: string }) {
         className="pointer-events-none fixed left-1/2 top-1/2 z-[90] h-[60vh] w-[60vh] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           background:
-            "radial-gradient(circle, rgba(0,242,255,0.18) 0%, rgba(188,19,254,0.12) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(242,194,0,0.16) 0%, rgba(184,29,29,0.14) 40%, transparent 70%)",
         }}
       />
     </AnimatePresence>

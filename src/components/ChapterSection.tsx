@@ -74,12 +74,13 @@ function ChapterSection({ chapter }: ChapterSectionProps) {
           viewport={{ once: true, amount: 0.5 }}
           className="mb-8"
         >
-          <span className="text-neon-blue text-xs font-mono tracking-[0.4em] uppercase mb-4 block">
-            Chapitre {chapter.id} — {chapter.subtitle}
+          <span className="text-neon-blue text-xs font-stencil tracking-[0.4em] uppercase mb-4 flex items-center gap-3">
+            <span className="inline-block w-8 h-px bg-neon-blue/60" />
+            Chapitre {String(chapter.id).padStart(2, '0')} — {chapter.subtitle}
           </span>
 
           <h2
-            className={`text-4xl md:text-7xl font-bold text-white tracking-tighter uppercase leading-none ${
+            className={`font-display text-6xl md:text-8xl text-bone tracking-wide uppercase leading-[0.9] ${
               chapter.effect === 'glitch' && !reduced ? 'glitch-text' : ''
             }`}
             aria-label={chapter.title}

@@ -1,11 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #050505;
-  --color-neon-blue: #00f2ff;
-  --color-neon-purple: #bc13fe;
-  --color-crimson: #990000;
-  
+  /* Grunge / street DA — concrete, caution yellow, blood crimson.
+     The legacy token names (neon-blue / neon-purple) are kept so existing
+     class names keep working; they now map to the street palette:
+       neon-blue   -> caution yellow  (primary accent)
+       neon-purple -> blood crimson   (secondary accent) */
+  --color-background: #0d0d0e;
+  --color-neon-blue: #f2c200;   /* caution yellow */
+  --color-neon-purple: #b81d1d; /* blood crimson */
+  --color-crimson: #b81d1d;
+  --color-concrete: #1a1a1c;
+  --color-bone: #e8e4dc;
+
+  --font-display: 'Anton', 'Oswald', sans-serif;
+  --font-stencil: 'Saira Stencil One', 'Oswald', sans-serif;
+  --font-condensed: 'Oswald', 'Inter', sans-serif;
+
   --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-glitch: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
   --animate-flash: flash 0.5s ease-out;
@@ -75,7 +86,7 @@ body {
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.05;
+  opacity: 0.09;
   pointer-events: none;
   z-index: 50;
 }
@@ -101,7 +112,7 @@ body {
 
 .glitch-text {
   animation: glitch 0.3s infinite;
-  text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9;
+  text-shadow: 2px 0 #b81d1d, -2px 0 #f2c200;
 }
 
 .blood-splatter {
@@ -116,9 +127,55 @@ body {
 /* Chromatic aberration burst — toggled on fast scroll (see App.tsx). RGB split
    on headings/paragraphs for a brief "speed warp" feel. */
 .chromatic-active h2 {
-  text-shadow: 2px 0 rgba(255, 0, 200, 0.55), -2px 0 rgba(0, 255, 249, 0.55);
+  text-shadow: 3px 0 rgba(184, 29, 29, 0.7), -3px 0 rgba(242, 194, 0, 0.6);
   transition: text-shadow 0.14s ease-out;
 }
+
+/* ---- Street / grunge textures -------------------------------------------- */
+
+/* Raw concrete: layered dark mottling + a faint vignette. Pair with
+   .noise-overlay on top for grain. */
+.concrete-bg {
+  background-color: #0d0d0e;
+  background-image:
+    radial-gradient(60% 50% at 25% 20%, rgba(60, 60, 64, 0.35) 0%, transparent 60%),
+    radial-gradient(50% 60% at 80% 75%, rgba(40, 40, 44, 0.4) 0%, transparent 55%),
+    radial-gradient(40% 40% at 60% 40%, rgba(70, 68, 60, 0.18) 0%, transparent 50%);
+}
+
+/* Hazard / crime-scene caution stripes. */
+.caution-tape {
+  background: repeating-linear-gradient(
+    -45deg,
+    #f2c200 0 28px,
+    #0d0d0e 28px 56px
+  );
+}
+
+/* Crimson spray blob — rough-edged via blur + contrast trick on a mask. */
+.spray-blot {
+  background: radial-gradient(circle, rgba(184, 29, 29, 0.55) 0%, rgba(184, 29, 29, 0.18) 45%, transparent 70%);
+  filter: blur(6px) contrast(1.4);
+  border-radius: 45% 55% 52% 48% / 50% 45% 55% 50%;
+}
+
+/* Torn / taped-paper card edge. */
+.taped {
+  position: relative;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+}
+.taped::before,
+.taped::after {
+  content: "";
+  position: absolute;
+  width: 70px;
+  height: 22px;
+  background: rgba(242, 194, 0, 0.25);
+  border: 1px solid rgba(242, 194, 0, 0.35);
+  backdrop-filter: blur(1px);
+}
+.taped::before { top: -10px; left: -14px; transform: rotate(-7deg); }
+.taped::after  { bottom: -10px; right: -14px; transform: rotate(-5deg); }
 
 /* Accessibility: respect the OS "reduce motion" setting. JS already disables the
    kinetic effects; this neutralizes any remaining CSS keyframes/transitions. */
