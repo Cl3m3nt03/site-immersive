@@ -7,16 +7,17 @@ import ChapterSection from "./components/ChapterSection";
 import AudioPlayer from "./components/AudioPlayer";
 import NeonCursor from "./components/NeonCursor";
 import Magnetic from "./components/Magnetic";
-import RadialTimeline from "./components/RadialTimeline";
+import DossierBoard from "./components/DossierBoard";
+import BahamasPage from "./components/BahamasPage";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
-import { Sparkles, BookOpen } from "lucide-react";
+import { Sparkles, BookOpen, Martini } from "lucide-react";
 
 function App() {
   const reduced = usePrefersReducedMotion();
   const [showIntro, setShowIntro] = useState(
     () => typeof sessionStorage !== "undefined" && sessionStorage.getItem("introSeen") !== "1"
   );
-  const [activeTab, setActiveTab] = useState<'story' | 'sphere'>('story');
+  const [activeTab, setActiveTab] = useState<'story' | 'sphere' | 'bahamas'>('story');
   const [activeChapter, setActiveChapter] = useState(1);
 
   const completeIntro = useCallback(() => {
@@ -123,11 +124,11 @@ function App() {
     <div className="relative min-h-screen bg-background selection:bg-neon-blue/30 selection:text-white">
       <NeonCursor />
 
-      {/* Background Atmosphere — story view only.
+      {/* Background Atmosphere — story view only (other tabs paint their own).
           Drop a photo at public/bg.jpg to set the backdrop; if it's missing
           the layer is simply transparent and the gradients below carry the
           mood, so nothing breaks. */}
-      {activeTab !== 'sphere' && (
+      {activeTab === 'story' && (
         <>
           {/* Concrete base (+ optional photo at public/bg.jpg) with parallax */}
           <div
@@ -197,6 +198,18 @@ function App() {
                   <Sparkles size={13} />
                   <span>Dossier</span>
                   {activeTab === 'sphere' && <motion.div layoutId="tab-underline" className="absolute -bottom-2 left-0 right-0 h-px bg-neon-purple" />}
+                </button>
+              </Magnetic>
+              <Magnetic strength={0.5}>
+                <button
+                  onClick={() => setActiveTab('bahamas')}
+                  className={`flex items-center gap-2 font-condensed text-xs uppercase tracking-[0.35em] transition-colors duration-300 focus:outline-none focus-visible:text-neon-blue ${
+                    activeTab === 'bahamas' ? 'text-neon-blue' : 'text-white/30 hover:text-white/70'
+                  }`}
+                >
+                  <Martini size={13} />
+                  <span>Bahamas</span>
+                  {activeTab === 'bahamas' && <motion.div layoutId="tab-underline" className="absolute -bottom-2 left-0 right-0 h-px bg-neon-blue" />}
                 </button>
               </Magnetic>
             </nav>
@@ -303,7 +316,7 @@ function App() {
                       </footer>
                     </div>
                   </motion.main>
-                ) : (
+                ) : activeTab === 'sphere' ? (
                   <motion.div
                     key="sphere-view"
                     initial={{ opacity: 0, scale: 0.98 }}
@@ -312,7 +325,18 @@ function App() {
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                     className="relative z-20 h-full w-full"
                   >
-                    <RadialTimeline />
+                    <DossierBoard />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="bahamas-view"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.02 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="relative z-20 h-full w-full"
+                  >
+                    <BahamasPage />
                   </motion.div>
                 )}
               </AnimatePresence>
