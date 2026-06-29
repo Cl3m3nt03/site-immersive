@@ -11,6 +11,15 @@
   --animate-flash: flash 0.5s ease-out;
 }
 
+@keyframes ringspin {
+  from { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
+}
+@keyframes ringspin-rev {
+  from { transform: rotate(0deg) }
+  to { transform: rotate(-360deg) }
+}
+
 @keyframes glitch {
   0% { transform: translate(0) }
   20% { transform: translate(-2px, 2px) }

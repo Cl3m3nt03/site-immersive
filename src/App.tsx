@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lenis from "lenis";
 import { STORY_DATA } from "./data/story";
@@ -7,13 +7,9 @@ import ChapterSection from "./components/ChapterSection";
 import AudioPlayer from "./components/AudioPlayer";
 import NeonCursor from "./components/NeonCursor";
 import Magnetic from "./components/Magnetic";
+import RadialTimeline from "./components/RadialTimeline";
 import { usePrefersReducedMotion } from "./hooks/usePrefersReducedMotion";
 import { Sparkles, BookOpen } from "lucide-react";
-
-// Three.js + the whole sphere scene is heavy — split it out so the initial
-// bundle (the story view) stays light and Three only loads on demand.
-const importSphere = () => import("./components/MemorySphere");
-const MemorySphere = lazy(importSphere);
 
 function App() {
   const reduced = usePrefersReducedMotion();
@@ -26,13 +22,6 @@ function App() {
   const completeIntro = useCallback(() => {
     sessionStorage.setItem("introSeen", "1");
     setShowIntro(false);
-  }, []);
-
-  // Download the heavy Three.js chunk in the background right away so switching
-  // to the sphere never blocks. One upfront fetch instead of a stutter later.
-  useEffect(() => {
-    const id = window.setTimeout(() => { importSphere(); }, 1200);
-    return () => window.clearTimeout(id);
   }, []);
 
   // --- Scroll plumbing (Lenis) -------------------------------------------------
@@ -141,7 +130,7 @@ function App() {
             ref={videoRef}
             className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none will-change-transform"
             style={{ transform: "scale(1.08)" }}
-            src="/video_scrool.mp4"
+            src={`${import.meta.env.BASE_URL}video_scrool.mp4`}
             autoPlay
             loop
             muted
@@ -189,13 +178,12 @@ function App() {
               <Magnetic strength={0.5}>
                 <button
                   onClick={() => setActiveTab('sphere')}
-                  onMouseEnter={importSphere}
                   className={`flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] transition-colors duration-500 focus:outline-none focus-visible:text-neon-purple ${
                     activeTab === 'sphere' ? 'text-neon-purple' : 'text-white/20 hover:text-white/60'
                   }`}
                 >
                   <Sparkles size={12} />
-                  <span>Sphère de Mémoire</span>
+                  <span>Mémoire</span>
                   {activeTab === 'sphere' && <motion.div layoutId="tab-underline" className="absolute -bottom-2 left-0 right-0 h-px bg-neon-purple" />}
                 </button>
               </Magnetic>
@@ -312,9 +300,7 @@ function App() {
                     transition={{ duration: 1.5 }}
                     className="relative z-20 h-full w-full"
                   >
-                    <Suspense fallback={<SphereLoader />}>
-                      <MemorySphere />
-                    </Suspense>
+                    <RadialTimeline />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -345,18 +331,5 @@ function WarpFlash({ trigger }: { trigger: string }) {
   );
 }
 
-function SphereLoader() {
-  return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-[#030303] gap-6">
-      <div className="relative w-16 h-16">
-        <div className="absolute inset-0 rounded-full border border-neon-purple/30" />
-        <div className="absolute inset-0 rounded-full border-t border-neon-blue animate-spin" />
-      </div>
-      <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-neon-blue/60 animate-pulse">
-        Initialisation du Deep Scan
-      </span>
-    </div>
-  );
-}
 
 export default App;
