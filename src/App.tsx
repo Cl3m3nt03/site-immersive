@@ -166,9 +166,10 @@ function App() {
         ) : (
           <motion.div
             key="content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: reduced ? 0.4 : 2 }}
+            // No entrance opacity fade here: if the tab loses focus during the
+            // animation, requestAnimationFrame pauses and the fade can freeze
+            // partway, leaving the whole récit dimmed/illegible. Content is
+            // shown at full opacity from the start.
             className="h-screen flex flex-col"
           >
             {/* Warp flash on tab switch */}
@@ -295,7 +296,9 @@ function App() {
                   <motion.main
                     key="story-view"
                     ref={setStoryScroll}
-                    initial={{ opacity: 0 }}
+                    // Start visible. A 0→1 fade here freezes if the tab is
+                    // unfocused on load (rAF paused), leaving the récit dim.
+                    initial={{ opacity: 1 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.35 }}

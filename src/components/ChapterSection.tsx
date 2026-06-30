@@ -93,7 +93,7 @@ function ChapterSection({ chapter }: ChapterSectionProps) {
           {chapter.content.map((paragraph, index) => (
             <p
               key={index}
-              className="text-lg md:text-xl text-gray-50 leading-relaxed font-normal [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]"
+              className="text-lg md:text-xl text-white leading-relaxed font-normal [text-shadow:0_1px_2px_rgba(0,0,0,1),0_2px_14px_rgba(0,0,0,0.95)]"
             >
               {paragraph}
             </p>
