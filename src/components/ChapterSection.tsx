@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { useInView } from "framer-motion";
 import { memo, useEffect, useRef, useState } from "react";
 import type { Chapter } from "../data/story";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
@@ -51,9 +51,11 @@ function ChapterSection({ chapter }: ChapterSectionProps) {
     );
   };
 
-  // Per-character reveal for the chapter title (skipped when reduce-motion is on)
-  const titleChars = Array.from(chapter.title);
-
+  // The story copy is rendered as plain, always-visible elements. Scroll-reveal
+  // animations were removed here: with Lenis (transform scrolling) + the
+  // sections' `content-visibility:auto`, the IntersectionObserver behind
+  // framer's `whileInView` fired unreliably and left whole chapters stuck at
+  // opacity 0. Legibility of the text matters more than the reveal flourish.
   return (
     <section
       ref={ref}
@@ -67,80 +69,46 @@ function ChapterSection({ chapter }: ChapterSectionProps) {
       {renderVisualEffects()}
 
       <div className="max-w-4xl w-full relative z-10">
-        <motion.div
-          initial={{ opacity: 0, x: reduced ? 0 : -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          viewport={{ once: true, amount: 0.5 }}
-          className="mb-8"
-        >
+        {/* Readability scrim: a soft dark wash behind the copy so the text
+            stays legible over the busy grunge / red-glow backdrop on any
+            chapter. */}
+        <div className="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-10 rounded-[2rem] bg-black/55 blur-2xl" />
+
+        <div className="mb-8">
           <span className="text-neon-blue text-xs font-stencil tracking-[0.4em] uppercase mb-4 flex items-center gap-3">
             <span className="inline-block w-8 h-px bg-neon-blue/60" />
             Chapitre {String(chapter.id).padStart(2, '0')} — {chapter.subtitle}
           </span>
 
           <h2
-            className={`font-display text-6xl md:text-8xl text-bone tracking-wide uppercase leading-[0.9] ${
+            className={`font-display text-6xl md:text-8xl text-bone tracking-wide uppercase leading-[0.9] [text-shadow:0_2px_24px_rgba(0,0,0,0.9),0_0_3px_rgba(232,228,220,0.45)] ${
               chapter.effect === 'glitch' && !reduced ? 'glitch-text' : ''
             }`}
-            aria-label={chapter.title}
           >
-            {reduced
-              ? chapter.title
-              : titleChars.map((ch, i) => (
-                  <motion.span
-                    key={i}
-                    aria-hidden
-                    className="inline-block"
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{
-                      duration: 0.5,
-                      delay: i * 0.035,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    {ch === ' ' ? ' ' : ch}
-                  </motion.span>
-                ))}
+            {chapter.title}
           </h2>
-        </motion.div>
+        </div>
 
         <div className="space-y-6">
           {chapter.content.map((paragraph, index) => (
-            <motion.p
+            <p
               key={index}
-              initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 + index * 0.1 }}
-              viewport={{ once: true, amount: 0.5 }}
-              className="text-lg md:text-xl text-gray-400 leading-relaxed font-light"
+              className="text-lg md:text-xl text-gray-50 leading-relaxed font-normal [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]"
             >
               {paragraph}
-            </motion.p>
+            </p>
           ))}
         </div>
 
         {chapter.memoryFragment && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 0.5 }}
-            className="mt-16 pt-8 border-t border-white/5"
-          >
-            <div className="group cursor-help relative inline-block">
-              <span className="text-[10px] uppercase tracking-[0.5em] text-white/30 group-hover:text-neon-purple transition-colors duration-500">
-                Fragment de mémoire
-              </span>
-              <div className="mt-2 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-700 ease-out">
-                <p className="text-sm font-mono italic text-neon-purple/80 shadow-neon-purple">
-                  {chapter.memoryFragment}
-                </p>
-              </div>
-              <div className="absolute -inset-2 bg-neon-purple/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full" />
-            </div>
-          </motion.div>
+          <div className="mt-16 pt-8 border-t border-white/10">
+            <span className="block mb-2 text-[10px] uppercase tracking-[0.5em] text-neon-purple/70">
+              Fragment de mémoire
+            </span>
+            <p className="text-sm md:text-base font-mono italic text-neon-purple [text-shadow:0_2px_10px_rgba(0,0,0,0.9)]">
+              {chapter.memoryFragment}
+            </p>
+          </div>
         )}
       </div>
 
