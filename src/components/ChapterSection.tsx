@@ -59,10 +59,12 @@ function ChapterSection({ chapter }: ChapterSectionProps) {
   return (
     <section
       ref={ref}
-      // content-visibility skips layout/paint for the off-screen chapters
-      // (10 full-height sections otherwise all paint every frame). The
-      // intrinsic-size hint keeps the scrollbar stable while they're skipped.
-      className={`relative min-h-screen w-full flex flex-col items-center justify-center py-32 px-6 overflow-hidden border-b border-white/5 transition-colors duration-1000 [content-visibility:auto] [contain-intrinsic-size:auto_100vh] ${
+      // NOTE: `content-visibility:auto` was removed here. With Lenis smooth
+      // scrolling (and any time the tab loses focus) its render-skipping
+      // heuristic left whole chapters un-painted — the text looked like it was
+      // missing / hidden behind the fixed atmosphere layers. 10 sections paint
+      // cheaply enough; always rendering them keeps the copy reliably visible.
+      className={`relative min-h-screen w-full flex flex-col items-center justify-center py-32 px-6 overflow-hidden border-b border-white/5 transition-colors duration-1000 ${
         isInView && chapter.effect === 'blood' ? 'bg-crimson/5' : ''
       }`}
     >
